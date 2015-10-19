@@ -74,6 +74,9 @@ setting                                      description
 /deis/router/sslKey                          cluster-wide SSL private key
 /deis/router/sslDhparam                      cluster-wide SSL dhparam
 /deis/router/sslProtocols                    nginx ssl_protocols setting (default: TLSv1 TLSv1.1 TLSv1.2)
+/deis/router/proxySslCert                    cluster-wide backend SSL certificate
+/deis/router/proxySslKey                     cluster-wide backend SSL private key
+/deis/router/$app/proxySsl (default: false)  allow proxy forwarding for app
 /deis/router/sslSessionCache                 nginx ssl_session_cache setting (default: not set)
 /deis/router/sslSessionTickets               nginx ssl_session_tickets setting (default: on)
 /deis/router/sslSessionTimeout               nginx ssl_session_timeout setting (default: 10m)
