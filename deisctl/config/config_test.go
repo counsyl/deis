@@ -141,40 +141,22 @@ func TestConfigRouterCert(t *testing.T) {
 
 }
 
-func TestConfigRouterBackendKey(t *testing.T) {
+
+func TestConfigRouterBackendCaCert(t *testing.T) {
 	t.Parallel()
 
-	f, err := writeTempFile("router-backend-key")
+	f, err := writeTempFile("router-backend-ca-cert")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	val, err := valueForPath("/deis/router/proxySslKey", f.Name())
+	val, err := valueForPath("/deis/router/proxySslCaCert", f.Name())
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if val != "router-backend-key" {
-		t.Fatalf("expected: router-key, got: %v", val)
-	}
-
-}
-
-func TestConfigRouterBackendCert(t *testing.T) {
-	t.Parallel()
-
-	f, err := writeTempFile("router-backend-cert")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	val, err := valueForPath("/deis/router/proxySslCert", f.Name())
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if val != "router-backend-cert" {
-		t.Fatalf("expected: router-cert, got: %v", val)
+	if val != "router-backend-ca-cert" {
+		t.Fatalf("expected: router-backend-ca-cert, got: %v", val)
 	}
 
 }

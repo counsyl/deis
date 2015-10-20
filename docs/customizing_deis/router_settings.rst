@@ -70,8 +70,7 @@ setting                                      description
 /deis/router/sslCiphers                      cluster-wide enabled SSL ciphers
 /deis/router/sslKey                          cluster-wide SSL private key
 /deis/router/sslDhparam                      cluster-wide SSL dhparam
-/deis/router/proxySslCert                    cluster-wide backend SSL certificate
-/deis/router/proxySslKey                     cluster-wide backend SSL private key
+/deis/router/proxySslCaCert                  cluster-wide backend SSL CA certificate
 /deis/router/$app/proxySsl (default: false)  allow proxy forwarding for app
 /deis/router/workerProcesses                 nginx number of worker processes to start (default: auto i.e. available CPU cores)
 /deis/router/proxyProtocol                   nginx PROXY protocol enabled

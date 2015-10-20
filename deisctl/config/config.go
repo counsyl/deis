@@ -17,8 +17,7 @@ var fileKeys = []string{
 	"/deis/router/sslCert",
 	"/deis/router/sslKey",
 	"/deis/router/sslDhparam",
-	"/deis/router/proxySslCert",
-	"/deis/router/proxySslKey"}
+	"/deis/router/proxySslCaCert"}
 
 // b64Keys define config keys to be base64 encoded before stored
 var b64Keys = []string{"/deis/platform/sshPrivateKey"}
