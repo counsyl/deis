@@ -60,7 +60,15 @@ func DeisServiceTest(
 		if err != nil {
 			t.Fatalf("Not reachable %s", err)
 		}
-		fmt.Println(response)
+		fmt.Printf("%s:%s", url, response)
+	}
+	if protocol == "https" {
+		url := "https://" + ipaddr + ":" + port
+		response, err := http.Get(url)
+		if err != nil {
+			t.Fatalf("Not reachable %s", err)
+		}
+		fmt.Printf("%s:%s", url, response)
 	}
 	if protocol == "tcp" || protocol == "udp" {
 		conn, err := net.Dial(protocol, ipaddr+":"+port)
