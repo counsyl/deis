@@ -141,25 +141,6 @@ func TestConfigRouterCert(t *testing.T) {
 
 }
 
-func TestConfigRouterBackendCaCert(t *testing.T) {
-	t.Parallel()
-
-	f, err := writeTempFile("router-backend-ca-cert")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	val, err := valueForPath("/deis/router/proxySslCaCert", f.Name())
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if val != "router-backend-ca-cert" {
-		t.Fatalf("expected: router-backend-ca-cert, got: %v", val)
-	}
-
-}
-
 func writeTempFile(data string) (*os.File, error) {
 	f, err := ioutil.TempFile("", "deisctl")
 	if err != nil {
