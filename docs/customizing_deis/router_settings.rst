@@ -73,7 +73,6 @@ setting                                      description
 /deis/router/sslCiphers                      cluster-wide enabled SSL ciphers
 /deis/router/sslKey                          cluster-wide SSL private key
 /deis/router/sslDhparam                      cluster-wide SSL dhparam
-/deis/router/proxySslCaCert                  cluster-wide backend SSL CA certificate
 /deis/router/$app/proxySsl (default: false)  force an https connection from the deis-router to your app's container
 /deis/router/sslProtocols                    nginx ssl_protocols setting (default: TLSv1 TLSv1.1 TLSv1.2)
 /deis/router/sslSessionCache                 nginx ssl_session_cache setting (default: not set)
