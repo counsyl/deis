@@ -81,6 +81,16 @@
       ],
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
+    "PlacementTenancy" : {
+      "Description" : "EC2 instance tenancy",
+      "Type" : "String",
+      "Default" : "default",
+      "AllowedValues" : [
+        "default",
+        "dedicated"
+      ],
+      "ConstraintDescription" : "must be a valid EC2 tenancy type."
+    },
     "EC2VirtualizationType" : {
       "Description" : "EC2 AMI virtualization type (see http://aws.amazon.com/amazon-linux-ami/instance-type-matrix/)",
       "Type": "String",
@@ -265,6 +275,7 @@
       "Properties": {
         "ImageId" : { "Fn::FindInMap" : [ "CoreOSAMIs", { "Ref" : "AWS::Region" }, { "Ref" : "EC2VirtualizationType" }]},
         "InstanceType": {"Ref": "InstanceType"},
+        "PlacementTenancy": {"Ref": "PlacementTenancy"},
         "IamInstanceProfile" : {
           "Fn::If" : [
             "UseIamInstanceProfile",
