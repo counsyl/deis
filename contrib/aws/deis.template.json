@@ -279,15 +279,15 @@
         "BlockDeviceMappings" : [
           {
             "DeviceName" : { "Fn::FindInMap": [ "RootDevices", { "Ref": "EC2VirtualizationType" }, "Name" ] },
-            "Ebs" : { "VolumeSize" : { "Ref": "RootVolumeSize" }, "VolumeType": { "Ref": "EC2EBSVolumeType" } }
+            "Ebs" : { "VolumeSize" : { "Ref": "RootVolumeSize" }, "VolumeType": { "Ref": "EC2EBSVolumeType" }, "Encrypted": "true" }
           },
           {
             "DeviceName" : "/dev/xvdf",
-            "Ebs" : { "VolumeSize" : { "Ref": "DockerVolumeSize" }, "VolumeType": { "Ref": "EC2EBSVolumeType" } }
+            "Ebs" : { "VolumeSize" : { "Ref": "DockerVolumeSize" }, "VolumeType": { "Ref": "EC2EBSVolumeType" }, "Encrypted": "true" }
           },
           {
             "DeviceName" : "/dev/xvdg",
-            "Ebs" : { "VolumeSize" : { "Ref": "EtcdVolumeSize" }, "VolumeType": { "Ref": "EC2EBSVolumeType" } }
+            "Ebs" : { "VolumeSize" : { "Ref": "EtcdVolumeSize" }, "VolumeType": { "Ref": "EC2EBSVolumeType" }, "Encrypted": "true" }
           }
         ]
       }
