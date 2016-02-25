@@ -265,7 +265,8 @@
             {"Key": "Name", "Value": "Deis", "PropagateAtLaunch": true}
         ],
         "LoadBalancerNames": [
-          { "Ref": "DeisWebELB" }
+          { "Ref": "DeisWebELB" },
+          { "Ref": "DeisPublicWebELB" }
         ]
       }
     },
@@ -439,7 +440,10 @@
           {"IpProtocol": "tcp", "FromPort": "80", "ToPort": "80", "SourceSecurityGroupId": { "Ref": "DeisWebELBSecurityGroup" } },
           {"IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "SourceSecurityGroupId": { "Ref": "DeisWebELBSecurityGroup" } },
           {"IpProtocol": "tcp", "FromPort": "2222", "ToPort": "2222", "SourceSecurityGroupId": { "Ref": "DeisWebELBSecurityGroup" } },
-          {"IpProtocol": "tcp", "FromPort": "9090", "ToPort": "9090", "SourceSecurityGroupId": { "Ref": "DeisWebELBSecurityGroup" } }
+          {"IpProtocol": "tcp", "FromPort": "9090", "ToPort": "9090", "SourceSecurityGroupId": { "Ref": "DeisWebELBSecurityGroup" } },
+          {"IpProtocol": "tcp", "FromPort": "80", "ToPort": "80", "SourceSecurityGroupId": { "Ref": "DeisPublicWebELBSecurityGroup" } },
+          {"IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "SourceSecurityGroupId": { "Ref": "DeisPublicWebELBSecurityGroup" } },
+          {"IpProtocol": "tcp", "FromPort": "9090", "ToPort": "9090", "SourceSecurityGroupId": { "Ref": "DeisPublicWebELBSecurityGroup" } }
         ],
         "VpcId" : { "Ref" : "VPC" }
       }
@@ -459,6 +463,10 @@
     "DNSName" : {
       "Description" : "DNS Name of the ELB",
       "Value" :  { "Fn::GetAtt" : ["DeisWebELB", "DNSName"] }
+    },
+    "PublicDNSName" : {
+      "Description" : "DNS Name of the Public ELB",
+      "Value" :  { "Fn::GetAtt" : ["DeisPublicWebELB", "PublicDNSName"] }
     }
   }
 }
