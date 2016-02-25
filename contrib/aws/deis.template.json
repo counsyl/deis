@@ -303,6 +303,66 @@
         ]
       }
     },
+    "DeisPublicWebELB": {
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+      "DependsOn" : "GatewayToInternet",
+      "Properties": {
+        "Scheme" : {"Ref": "ELBScheme"},
+        "HealthCheck": {
+          "HealthyThreshold": "4",
+          "Interval": "15",
+          "Target": "HTTP:9090/health-check",
+          "Timeout": "5",
+          "UnhealthyThreshold": "2"
+        },
+        "Subnets": [
+          { "Ref" : "Subnet1" },
+          { "Ref" : "Subnet2" }
+        ],
+        "Policies" : [{
+           "PolicyName" : "EnableProxyProtocol",
+           "PolicyType" : "ProxyProtocolPolicyType",
+           "Attributes" : [{
+              "Name"  : "ProxyProtocol",
+              "Value" : "true"
+           }],
+           "InstancePorts" : ["80", "443"]
+        }],
+        "Listeners": [
+          {
+            "InstancePort": "80",
+            "InstanceProtocol": "TCP",
+            "LoadBalancerPort": "80",
+            "Protocol": "TCP"
+          },
+          {
+            "InstancePort": "443",
+            "InstanceProtocol": "TCP",
+            "LoadBalancerPort": "443",
+            "Protocol": "TCP"
+          }
+        ],
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": ["DeisPublicWebELBSecurityGroup", "GroupId"]
+          }
+        ],
+        "ConnectionSettings": {
+          "IdleTimeout": 1200
+        }
+      }
+    },
+    "DeisPublicWebELBSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Deis Public Web ELB SecurityGroup",
+        "SecurityGroupIngress": [
+          {"IpProtocol": "tcp", "FromPort": "80", "ToPort": "80", "CidrIp": "0.0.0.0/0"},
+          {"IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0"}
+        ],
+        "VpcId": { "Ref" : "VPC" }
+      }
+    },
     "DeisWebELB": {
       "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
       "DependsOn" : "GatewayToInternet",
