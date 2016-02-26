@@ -133,6 +133,13 @@
       "Description": "Desired size of the etcd volume, in GB",
       "Type": "Number",
       "Default": "10"
+    },
+    "CreatePublicELB": {
+      "Description": "Boolean if true it will create a Public ELB.",
+      "Type": "String",
+      "Default": "false",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be either true or false"
     }
   },
 
@@ -157,6 +164,12 @@
            ""
         ]
       }]
+    },
+    "UsePublicELB" : {
+      "Fn::Equals" : [
+        { "Ref" : "CreatePublicELB" },
+        "true"
+      ]
     }
   },
 
@@ -264,10 +277,16 @@
         "Tags": [
             {"Key": "Name", "Value": "Deis", "PropagateAtLaunch": true}
         ],
-        "LoadBalancerNames": [
-          { "Ref": "DeisWebELB" }
+        "LoadBalancerNames": [ 
+          { "Ref": "DeisWebELB" },
+          {
+            "Fn::If": [
+              "UsePublicELB",
+              { "Ref": "DeisPublicWebELB" },
+              { "Ref": "AWS::NoValue" }
+            ]
+          }
         ]
-      }
     },
     "CoreOSServerLaunchConfig": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
@@ -301,6 +320,66 @@
             "Ebs" : { "VolumeSize" : { "Ref": "EtcdVolumeSize" }, "VolumeType": { "Ref": "EC2EBSVolumeType" }, "Encrypted": "true" }
           }
         ]
+      }
+    },
+    "DeisPublicWebELB": {
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Condition": "UsePublicELB",
+      "DependsOn" : "GatewayToInternet",
+      "Properties": {
+        "Scheme" : {"Ref": "ELBScheme"},
+        "HealthCheck": {
+          "HealthyThreshold": "4",
+          "Interval": "15",
+          "Target": "HTTP:9090/health-check",
+          "Timeout": "5",
+          "UnhealthyThreshold": "2"
+        },
+        "Subnets": [
+          { "Ref" : "Subnet1" },
+          { "Ref" : "Subnet2" }
+        ],
+        "Policies" : [{
+           "PolicyName" : "EnableProxyProtocol",
+           "PolicyType" : "ProxyProtocolPolicyType",
+           "Attributes" : [{
+              "Name"  : "ProxyProtocol",
+              "Value" : "true"
+           }],
+           "InstancePorts" : ["80", "443"]
+        }],
+        "Listeners": [
+          {
+            "InstancePort": "80",
+            "InstanceProtocol": "TCP",
+            "LoadBalancerPort": "80",
+            "Protocol": "TCP"
+          },
+          {
+            "InstancePort": "443",
+            "InstanceProtocol": "TCP",
+            "LoadBalancerPort": "443",
+            "Protocol": "TCP"
+          }
+        ],
+        "SecurityGroups": [
+          { "Ref" : "DeisPublicWebELBSecurityGroup" }
+        ],
+        "ConnectionSettings": {
+          "IdleTimeout": 1200
+        }
+      }
+    },
+    "DeisPublicWebELBSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Condition": "UsePublicELB",
+      "Properties": {
+        "GroupDescription": "Deis Public Web ELB SecurityGroup",
+        "SecurityGroupIngress": [
+          {"IpProtocol": "tcp", "FromPort": "80", "ToPort": "80", "CidrIp": "0.0.0.0/0"},
+          {"IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "CidrIp": "0.0.0.0/0"}
+        ],
+        "VpcId": { "Ref" : "VPC" }
       }
     },
     "DeisWebELB": {
@@ -349,9 +428,7 @@
           }
         ],
         "SecurityGroups": [
-          {
-            "Fn::GetAtt": ["DeisWebELBSecurityGroup", "GroupId"]
-          }
+          { "Ref" : "DeisWebELBSecurityGroup" }
         ],
         "ConnectionSettings": {
           "IdleTimeout": 1200
@@ -379,7 +456,22 @@
           {"IpProtocol": "tcp", "FromPort": "80", "ToPort": "80", "SourceSecurityGroupId": { "Ref": "DeisWebELBSecurityGroup" } },
           {"IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "SourceSecurityGroupId": { "Ref": "DeisWebELBSecurityGroup" } },
           {"IpProtocol": "tcp", "FromPort": "2222", "ToPort": "2222", "SourceSecurityGroupId": { "Ref": "DeisWebELBSecurityGroup" } },
-          {"IpProtocol": "tcp", "FromPort": "9090", "ToPort": "9090", "SourceSecurityGroupId": { "Ref": "DeisWebELBSecurityGroup" } }
+          {"IpProtocol": "tcp", "FromPort": "9090", "ToPort": "9090", "SourceSecurityGroupId": { "Ref": "DeisWebELBSecurityGroup" } },
+          {"Fn::If": [
+            "UsePublicELB",
+            {"IpProtocol": "tcp", "FromPort": "80", "ToPort": "80", "SourceSecurityGroupId": { "Ref": "DeisPublicWebELBSecurityGroup" } },
+            {"Ref": "AWS::NoValue"}
+          ]},
+          {"Fn::If": [
+            "UsePublicELB",
+            {"IpProtocol": "tcp", "FromPort": "443", "ToPort": "443", "SourceSecurityGroupId": { "Ref": "DeisPublicWebELBSecurityGroup" } },
+            {"Ref": "AWS::NoValue"}
+          ]},
+          {"Fn::If": [
+            "UsePublicELB",
+            {"IpProtocol": "tcp", "FromPort": "9090", "ToPort": "9090", "SourceSecurityGroupId": { "Ref": "DeisPublicWebELBSecurityGroup" } },
+            {"Ref": "AWS::NoValue"}
+          ]}
         ],
         "VpcId" : { "Ref" : "VPC" }
       }
@@ -399,6 +491,11 @@
     "DNSName" : {
       "Description" : "DNS Name of the ELB",
       "Value" :  { "Fn::GetAtt" : ["DeisWebELB", "DNSName"] }
+    },
+    "PublicDNSName": {
+      "Condition": "UsePublicELB",
+      "Description" : "DNS Name of the Public ELB",
+      "Value" :  { "Fn::GetAtt" : ["DeisPublicWebELB", "PublicDNSName"] }
     }
   }
 }

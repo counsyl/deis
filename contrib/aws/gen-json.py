@@ -117,6 +117,7 @@ template['Mappings']['CoreOSAMIs'] = coreos_amis(args['channel'], args['version'
 VPC_ID = os.getenv('VPC_ID', None)
 VPC_SUBNETS = os.getenv('VPC_SUBNETS', None)
 VPC_PRIVATE_SUBNETS = os.getenv('VPC_PRIVATE_SUBNETS', VPC_SUBNETS)
+VPC_PUBLIC_ELB_SUBNETS = os.getenv('VPC_PUBLIC_ELB_SUBNETS', None)
 VPC_ZONES = os.getenv('VPC_ZONES', None)
 
 if VPC_ID and VPC_SUBNETS and VPC_ZONES and len(VPC_SUBNETS.split(',')) == len(VPC_ZONES.split(',')):
@@ -132,14 +133,17 @@ if VPC_ID and VPC_SUBNETS and VPC_ZONES and len(VPC_SUBNETS.split(',')) == len(V
     del template['Resources']['PublicRoute']
     del template['Resources']['CoreOSServerLaunchConfig']['DependsOn']
     del template['Resources']['DeisWebELB']['DependsOn']
+    del template['Resources']['DeisPublicWebELB']['DependsOn']
 
     # update VpcId fields
     template['Resources']['DeisWebELBSecurityGroup']['Properties']['VpcId'] = VPC_ID
+    template['Resources']['DeisPublicWebELBSecurityGroup']['Properties']['VpcId'] = VPC_ID
     template['Resources']['VPCSecurityGroup']['Properties']['VpcId'] = VPC_ID
 
     # update subnets and zones
     template['Resources']['CoreOSServerAutoScale']['Properties']['AvailabilityZones'] = VPC_ZONES.split(',')
     template['Resources']['CoreOSServerAutoScale']['Properties']['VPCZoneIdentifier'] = VPC_PRIVATE_SUBNETS.split(',')
     template['Resources']['DeisWebELB']['Properties']['Subnets'] = VPC_SUBNETS.split(',')
+    template['Resources']['DeisPublicWebELB']['Properties']['Subnets'] = VPC_PUBLIC_ELB_SUBNETS.split(',')
 
 print json.dumps(template)
