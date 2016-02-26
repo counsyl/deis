@@ -117,6 +117,7 @@ template['Mappings']['CoreOSAMIs'] = coreos_amis(args['channel'], args['version'
 VPC_ID = os.getenv('VPC_ID', None)
 VPC_SUBNETS = os.getenv('VPC_SUBNETS', None)
 VPC_PRIVATE_SUBNETS = os.getenv('VPC_PRIVATE_SUBNETS', VPC_SUBNETS)
+VPC_PUBLIC_ELB_SUBNETS = os.getenv('VPC_PUBLIC_ELB_SUBNETS', None)
 VPC_ZONES = os.getenv('VPC_ZONES', None)
 
 if VPC_ID and VPC_SUBNETS and VPC_ZONES and len(VPC_SUBNETS.split(',')) == len(VPC_ZONES.split(',')):
