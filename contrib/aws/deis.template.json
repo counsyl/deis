@@ -275,7 +275,7 @@
         "KeyName": {"Ref": "KeyPair"},
         "UserData" : { "Fn::Base64": { "Fn::Join": [ "", [ ] ] } },
         "AssociatePublicIpAddress": {"Ref": "AssociatePublicIP"},
-        "SecurityGroups": [ { "Fn::GetAtt": ["VPCSecurityGroup", "GroupId"] } ],
+        "SecurityGroups": [ { "Ref": "VPCSecurityGroup" } ],
         "BlockDeviceMappings" : [
           {
             "DeviceName" : { "Fn::FindInMap": [ "RootDevices", { "Ref": "EC2VirtualizationType" }, "Name" ] },
@@ -338,9 +338,7 @@
           }
         ],
         "SecurityGroups": [
-          {
-            "Fn::GetAtt": ["DeisWebELBSecurityGroup", "GroupId"]
-          }
+          { "Ref": "DeisWebELBSecurityGroup" }
         ],
         "ConnectionSettings": {
           "IdleTimeout": 1200
