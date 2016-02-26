@@ -363,9 +363,7 @@
           }
         ],
         "SecurityGroups": [
-          {
-            "Fn::GetAtt": ["DeisPublicWebELBSecurityGroup", "GroupId"]
-          }
+          { "Ref" : "DeisPublicWebELBSecurityGroup" }
         ],
         "ConnectionSettings": {
           "IdleTimeout": 1200
@@ -430,9 +428,7 @@
           }
         ],
         "SecurityGroups": [
-          {
-            "Fn::GetAtt": ["DeisWebELBSecurityGroup", "GroupId"]
-          }
+          { "Ref" : "DeisWebELBSecurityGroup" }
         ],
         "ConnectionSettings": {
           "IdleTimeout": 1200
@@ -496,13 +492,10 @@
       "Description" : "DNS Name of the ELB",
       "Value" :  { "Fn::GetAtt" : ["DeisWebELB", "DNSName"] }
     },
-    "PublicDNSName": { "Fn::If": [
-      "UsePublicELB",
-      {
-        "Description" : "DNS Name of the Public ELB",
-        "Value" :  { "Fn::GetAtt" : ["DeisPublicWebELB", "PublicDNSName"] }
-      },
-      { "Ref": "AWS::NoValue" }
-    ] }
+    "PublicDNSName": {
+      "Condition": "UsePublicELB",
+      "Description" : "DNS Name of the Public ELB",
+      "Value" :  { "Fn::GetAtt" : ["DeisPublicWebELB", "PublicDNSName"] }
+    }
   }
 }
