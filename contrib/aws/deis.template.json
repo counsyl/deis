@@ -496,7 +496,7 @@
     "PublicDNSName": {
       "Condition": "UsePublicELB",
       "Description" : "DNS Name of the Public ELB",
-      "Value" :  { "Fn::GetAtt" : ["DeisPublicWebELB", "PublicDNSName"] }
+      "Value" :  { "Fn::GetAtt" : ["DeisPublicWebELB", "DNSName"] }
     }
   }
 }
