@@ -53,6 +53,7 @@ aws cloudformation create-stack \
     --stack-name $STACK_NAME \
     --parameters "$(<$THIS_DIR/cloudformation.json)" \
     --stack-policy-body "$(<$THIS_DIR/stack_policy.json)" \
+    --tags "$(<$THIS_DIR/tags.json)" \
     $EXTRA_AWS_CLI_ARGS
 
 # loop until the instances are created
