@@ -310,7 +310,7 @@
         "BlockDeviceMappings" : [
           {
             "DeviceName" : { "Fn::FindInMap": [ "RootDevices", { "Ref": "EC2VirtualizationType" }, "Name" ] },
-            "Ebs" : { "VolumeSize" : { "Ref": "RootVolumeSize" }, "VolumeType": { "Ref": "EC2EBSVolumeType" }, "Encrypted": "true" }
+            "Ebs" : { "VolumeSize" : { "Ref": "RootVolumeSize" }, "VolumeType": { "Ref": "EC2EBSVolumeType" } }
           },
           {
             "DeviceName" : "/dev/xvdf",
