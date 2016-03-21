@@ -328,7 +328,7 @@
       "Condition": "UsePublicELB",
       "DependsOn" : "GatewayToInternet",
       "Properties": {
-        "Scheme" : {"Ref": "ELBScheme"},
+        "Scheme" : "internet-facing",
         "HealthCheck": {
           "HealthyThreshold": "4",
           "Interval": "15",
